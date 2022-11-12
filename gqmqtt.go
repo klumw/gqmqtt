@@ -36,15 +36,15 @@ func main() {
 	cSize := 4
 	foundPort := false
 
-	var serPort = flag.String("s", "/dev/ttyUSB0", "serial port name")
-	var verbose = flag.Bool("v", false, "verbose mode")
-	var baudRate = flag.Uint("b", 115200, "baud rate")
-	var model = flag.String("m", "GMC-500+", "GQ Geiger counter model")
-	var topic = flag.String("t", "tele/geiger/cpm", "mqtt topic")
-	var host = flag.String("h", "tcp://localhost:1883", "host url")
-	var interval = flag.Uint("i", 60, "update interval for mqtt topic in seconds")
-	var user = flag.String("u", "", "mqtt user")
-	var pwd = flag.String("p", "", "mqtt password")
+	serPort := flag.String("s", "/dev/ttyUSB0", "serial port name")
+	verbose := flag.Bool("v", false, "verbose mode")
+	baudRate := flag.Uint("b", 115200, "baud rate")
+	model := flag.String("m", "GMC-500+", "GQ Geiger counter model")
+	topic := flag.String("t", "tele/geiger/cpm", "mqtt topic")
+	host := flag.String("h", "tcp://localhost:1883", "host url")
+	interval := flag.Uint("i", 60, "update interval for mqtt topic in seconds")
+	user := flag.String("u", "", "mqtt user")
+	pwd := flag.String("p", "", "mqtt password")
 
 	flag.Parse()
 
