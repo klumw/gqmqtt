@@ -5,7 +5,7 @@ The software reads data from the device via USB and transfers the data to a MQTT
 Since most home automation systems support the MQTT protocol, sensor integration should be straightforward. 
 
 The bridge software can be compiled for Windows and Linux.
-See also the installation section for [Raspberry PI](https://www.raspberrypi.org/) 3 and 4. You can also download a ready to use executable for Raspberry PI OS from [here](https://github.com/klumw/gqmqtt/releases).
+See also the installation section for [Raspberry PI](https://www.raspberrypi.org/) 3 and 4. You can also download a ready to use [executable for Raspberry PI OS](https://github.com/klumw/gqmqtt/releases).
 
 For compiling the software the installation of the latest version of the [GO](golang.org) programming language is necessary. 
 
