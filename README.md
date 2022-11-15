@@ -16,8 +16,8 @@ For compiling the software the installation of the latest version of the [GO](go
 3. Follow the [GO installation instructions](https://shores.dev/install-go-language-on-raspberry-pi-3-and-4/)
 4. Run *go build* inside the source folder.
  If everything went well you will get a **gqmqtt** executable in the src folder.
-5. Make sure the Geiger Counter device is switched on and that it is connected to your Raspberry Pi via USB. Use the supplied USB cable.
-6. In the device settings the option **Third party output** must be switched off. Baud rate should be set to the default (115200).
+5. Make sure the Geiger Counter device is switched on and is connected to your Raspberry Pi via USB. Use only the supplied USB cable if possible.
+6. In the device settings the option **Third party output** must be switched off. Baud rate should be set to the default value (115200).
 7. For a quick test start your software with the command *./gqmqtt -v*, this will start the bridge in verbose mode. Type *--help* to get an overview of all available command line flags.
 8. If your mqtt broker runs on another host you will need to set up the host url with the -h flag
    (e.g. *-h tcp://192.168.178.25:1883*)
