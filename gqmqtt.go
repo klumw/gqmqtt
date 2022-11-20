@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -45,6 +46,7 @@ func main() {
 	interval := flag.Uint("i", 60, "update interval for mqtt topic in seconds")
 	user := flag.String("u", "", "mqtt user")
 	pwd := flag.String("p", "", "mqtt password")
+	jfmt := flag.Bool("j", false, "output data in json format")
 
 	flag.Parse()
 
@@ -54,6 +56,10 @@ func main() {
 
 	if !isElementInArray(*model, &models) {
 		exitWithMsg("invalid Geiger Counter model")
+	}
+
+	if *verbose {
+		fmt.Printf("host:%s\nsleep time:%ds\n", *host, *interval)
 	}
 
 	ports, err := serial.GetPortsList()
@@ -122,18 +128,26 @@ func main() {
 			break
 		}
 		cpm, _ := bytesToCpmValue(&buff)
+		cpmi := int(cpm)
 		if *verbose {
 			fmt.Printf("%d,", cpm)
 		}
-		sendCPM(client, cpm, topic)
+		var data string
+		if !*jfmt {
+			data = fmt.Sprint(cpmi)
+		} else {
+			data, err = toJson(interval, &cpmi)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		publish(&client, &data, topic)
 		time.Sleep(time.Duration(*interval) * time.Second)
 	}
 }
 
 func createMqttClient(host *string, user *string, pwd *string) MQTT.Client {
-
 	opts := MQTT.NewClientOptions().AddBroker(*host)
-
 	if *pwd != "" {
 		opts.SetPassword(*pwd)
 	}
@@ -141,9 +155,7 @@ func createMqttClient(host *string, user *string, pwd *string) MQTT.Client {
 		opts.SetUsername(*user)
 	}
 	opts.SetClientID("Geiger Counter")
-
 	c := MQTT.NewClient(opts)
-
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		exitWithError(token.Error())
 	}
@@ -163,11 +175,13 @@ func bytesToCpmValue(buff *[]byte) (uint32, error) {
 	}
 }
 
-func sendCPM(client MQTT.Client, value uint32, topic *string) {
-	if !client.IsConnected() {
-		log.Fatal("mqtt not connected!")
-	} else {
-		token := client.Publish(*topic, byte(0), false, strconv.FormatUint(uint64(value), 10))
+func publish(client *MQTT.Client, value *string, topic *string) {
+	if !(*client).IsConnected() {
+		token := (*client).Connect()
+		token.Wait()
+	}
+	{
+		token := (*client).Publish(*topic, byte(0), false, *value)
 		token.Wait()
 	}
 }
@@ -189,4 +203,22 @@ func isElementInArray[T comparable](element T, elements *[]T) bool {
 		}
 	}
 	return false
+}
+
+func toJson(interval *uint, cpm *int) (string, error) {
+	var res string
+	now := time.Now()
+	time := now.Format(time.RFC3339)
+	sleep := fmt.Sprint(*interval)
+	cpmStr := fmt.Sprint(*cpm)
+	c := struct {
+		Time  string `json:"Time"`
+		Cpm   string `json:"Cpm"`
+		Sleep string `json:"Sleep"`
+	}{Time: time, Cpm: cpmStr, Sleep: sleep}
+	b, err := json.MarshalIndent(&c, "", "\t")
+	if err == nil {
+		res = string(b[:])
+	}
+	return res, err
 }
