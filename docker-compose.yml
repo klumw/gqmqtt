@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  mon-app-go:
+    image: gqmqtt  # Docker image name
+    container_name: gqmqtt  # Container name
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"  # Allow serial access
+    restart: unless-stopped  # Redémarre le conteneur en cas de plantage
+    # You man cusomize you qgmqtt command here
+    command: "gqmqtt -v" 
