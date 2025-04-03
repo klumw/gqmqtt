@@ -103,13 +103,16 @@ func main() {
 	if *verbose {
 		fmt.Print("mqtt client created\n")
 	}
-	if *model != "GMC-500+" {
-		cSize = 2
+	if *model == "GMC-280" {
 		if *baudRate > 57600 {
 			exitWithMsg("max. baud rate for selected model is 57600, but using " + strconv.FormatUint(uint64(*baudRate), 10))
 		}
 	}
 
+	if *model != "GMC-500+" {
+		cSize = 2
+	}
+	
 	buff := make([]byte, cSize)
 
 	for {
